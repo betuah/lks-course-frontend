@@ -1,0 +1,16 @@
+// Ref: https://github.com/nuxt-community/vuetify-module#customvariables
+//
+// The variables you want to modify
+// $font-size-root: 20px;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,wght@0,200;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap');
+
+$body-font-family : 'Nunito Sans', sans-serif !default;
+$heading-font-family : 'Nunito Sans', sans-serif !default;
+
+// button
+// $btn-outline-border-width : 1px !default;
+
+html { overflow-y: auto };
+
+// $btn-outline-border-width : '4px';

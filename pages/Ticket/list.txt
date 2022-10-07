@@ -1,0 +1,346 @@
+<template>
+   <div class="col-12 fill-height pa-5">
+      <div class="col-12 d-flex flex-column flex-md-row align-md-center pa-0">
+         <div class="col-12 col-md-7 pa-0 d-flex flex-column">
+            <span class="text-h5 font-weight-light">Ticket List</span>
+            <span class="text-caption grey--text">Ticketing helps you accomplish everything you need to do to resolve the day-to-day IT tickets faster than ever.</span>
+         </div>
+         <v-spacer></v-spacer>
+         <div class="col-12 col-md-5 pa-0 d-flex flex-row justify-end my-2 my-md-0 flex-wrap">
+            <div class="col-6 col-md-3 d-flex flex-column justify-center align-center">
+               <span class="font-weight-bold success--text">2500</span>
+               <span class="tw-text-xs">Ticket Closed</span>
+            </div>
+            <div class="col-6 col-md-3 d-flex flex-column justify-center align-center">
+               <span class="font-weight-bold lightRed--text">12</span>
+               <span class="tw-text-xs">Ticket Opened</span>
+            </div>
+            <div class="col-6 col-md-3 d-flex flex-column justify-center align-center">
+               <span class="font-weight-bold primary--text">2</span>
+               <span class="tw-text-xs">On Progress</span>
+            </div>
+            <div class="col-6 col-md-3 d-flex flex-column justify-center align-center">
+               <span class="font-weight-bold grey--text">0</span>
+               <span class="tw-text-xs">On Hold</span>
+            </div>
+         </div>
+      </div>
+      <!-- <v-divider class="my-3"></v-divider> -->
+      <div class="col-12 mt-4 d-flex flex-column flex-md-row align-md-center pa-0">
+         <!-- <div class="">
+            <v-menu rounded="lg" offset-y transition="slide-y-transition" :close-on-content-click="false">
+               <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                     color="primary"
+                     icon
+                     plain
+                     v-bind="attrs"
+                     class="text-capitalize pa-0 ma-0"
+                     v-on="on"
+                     :ripple="false"
+                  >
+                     <Iconify iconName="ic:twotone-filter-alt" className="tw-text-xl grey--text" />
+                  </v-btn>
+               </template>
+               <v-list dense>
+                  <div v-for="(item, index) in headers" :key="index" >
+                  <v-hover v-slot="{ hover }">
+                     <v-list-item 
+                        :class="`d-flex flex-row align-center ${item.isShow && 'primary lighten-4'}`" 
+                        @click="selectHeader(`${item.value}`)"
+                     >
+                        <span :class="`ml-2 text-caption ${ hover && 'primary--text' }`">{{ item.text }}</span>
+                     </v-list-item>
+                  </v-hover>
+                  </div>
+               </v-list>
+            </v-menu>
+         </div> -->
+         <div class="col-12 col-md-2 pa-0 mr-md-3 d-flex flex-row">
+            <v-menu
+               ref="calendarMenu"
+               v-model="calendarMenu"
+               :close-on-content-click="false"
+               :return-value.sync="dates"
+               transition="scale-transition"
+               offset-y
+               min-width="auto"
+               rounded="lg"
+            >
+            <template v-slot:activator="{ on, attrs }">
+               <v-text-field
+                  v-model="dateRangeText"
+                  label="Picker in menu"
+                  readonly
+                  outlined
+                  dense
+                  hide-details="auto"
+                  class="rounded-lg text-caption"
+                  v-bind="attrs"
+                  v-on="on"
+               >
+                  <template v-slot:label>
+                     <div class="tw-text-sm">Pick Date</div>
+                  </template>
+                  <template v-slot:prepend-inner>
+                     <Iconify iconName="fa-solid:calendar-alt" className="tw-text-sm grey--text mr-1 my-1" />
+                  </template>
+               </v-text-field>
+            </template>
+            <v-date-picker
+               v-model="dates"
+               range
+               no-title
+               scrollable
+               color="primary"
+               class="tw-border-none"
+            >
+               <v-spacer></v-spacer>
+               <v-btn
+                  text
+                  small
+                  color="primary"
+                  @click="calendarMenu = false"
+               >
+                  Cancel
+               </v-btn>
+               <v-btn
+                  text
+                  small
+                  color="primary"
+                  @click="$refs.calendarMenu.save(dates)"
+               >
+                  OK
+               </v-btn>
+            </v-date-picker>
+            </v-menu>
+         </div>
+         <div class="d-flex mr-md-3 mt-2 mt-md-0 flex-grow-1">
+            <v-text-field
+               v-model="search"
+               dense
+               hide-details
+               outlined
+               class="text-capitalize text-caption rounded-lg"
+            >
+               <template v-slot:label>
+                  <div class="tw-text-sm">Find ticket title</div>
+               </template>
+               <template v-slot:prepend-inner>
+                  <Iconify iconName="icon-park-outline:search" className="tw-text-sm grey--text mr-1 my-1" />
+               </template>
+            </v-text-field>
+         </div>
+         <div class="d-flex flex-row mt-2 mt-md-0">
+            <v-menu rounded="lg" offset-y transition="slide-y-transition" :close-on-content-click="false">
+               <template v-slot:activator="{ attrs, on}">
+                  <v-btn v-bind="attrs" v-on="on" color="primary" outlined class="rounded-lg text-capitalize">Category <Iconify iconName="uil:angle-down" className="tw-text-base grey--text" /></v-btn>
+               </template>
+
+               <v-list dense>
+                  <v-list-item-group v-model="category" active-class="tw-text-sm primary--text">
+                     <v-hover v-slot="{ hover }">
+                        <v-list-item :class="`text-caption ${hover && 'primary--text'} tw-transition-all tw-ease-in-out tw-duration-200`">
+                           All Category
+                        </v-list-item>
+                     </v-hover>
+                     <v-hover v-for="item in categoryList" :key="item.key" v-slot="{ hover }">
+                        <v-list-item :class="`text-caption ${hover && 'primary--text'} tw-transition-all tw-ease-in-out tw-duration-200`">
+                           {{ item.catTitle }}
+                        </v-list-item>
+                     </v-hover>
+                  </v-list-item-group>
+               </v-list>
+            </v-menu>
+            <v-btn color="primary" class="rounded-lg text-capitalize ml-2">New Ticket</v-btn>
+         </div>
+      </div>
+      <div class="col-12 pa-0 d-flex flex-column">
+         <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :search="search"
+            hide-default-header
+            hide-default-footer
+            :page.sync="page"
+            :items-per-page="itemsPerPage"
+            @page-count="pageCount = $event"
+            loading-text="Loading data!"
+            no-data-text="Empty ticket."
+            no-results-text="Ticket Not Found!"
+            color="primary"
+            class="elevation-0 accent tw-border-2 tw-min-h-40"
+         >
+            <template v-slot:item="{ item }">
+               <div class="col-12 my-2 my-md-4 rounded-lg d-flex flex-column align-md-start pa-1 pa-md-1 tw-border-2 tw-border-grey">
+                  <div class="col-12 d-flex flex-column flex-md-row pa-0 align-md-center">
+                     <div class="d-flex flex-column col-12 col-md-6">
+                        <div class="col-12 pa-0 d-flex flex-row align-center">
+                           <span class="tw-text-lg tw-truncate font-weight-bold primary--text">{{ item.subject }}</span>
+                           <v-spacer></v-spacer>
+                           <v-chip x-small outlined :color="`${ changeStateColor(item.state )}`" :class="`ml-3 `">
+                              <span>{{ changeState(item.state) }}</span>
+                           </v-chip>
+                        </div>
+                        <div class="col-12 pa-0 d-flex flex-row align-center">
+                           <div class="d-flex flex-row align-center">
+                              <span class="tw-text-xs grey--text">{{ item.creator }}</span>
+                              <Iconify iconName="iconoir:nav-arrow-right" className="tw-text-xs grey--text" />
+                              <span class="tw-text-xs grey--text ml-1">{{ item.creatorGroup }}</span>
+                           </div>
+                           <v-spacer></v-spacer>
+                           <span class="tw-text-xs grey--text">{{ item.ticketNumber }}</span>
+                        </div>
+                     </div>
+                     <div class="d-flex flex-row align-center col-12 col-md-2 pa-0">
+                        <div class="d-flex flex-column col-6">
+                           <span class="tw-text-xs">Priority</span>
+                           <span :class="`tw-text-xs tw-font-semibold ${ changeCriticalColor(item.priority) }`">{{ priorityName(item.priority) }}</span>
+                        </div>
+                        <div class="d-flex flex-column col-6">
+                           <span class="tw-text-xs">Status</span>
+                           <v-chip small :class="`py-2 d-flex flex-row align-center ${item.status == 1 ? `info` : `success`}`">
+                              <Iconify 
+                                 :iconName="item.status == 1 ? `iconoir:info-empty` : `iconoir:check`" 
+                                 className="tw-text-xs" 
+                              />
+                              <span class="ml-1 tw-text-xs">{{ item.status == 1 ? 'Open' : 'Closed' }}</span>
+                           </v-chip>
+                        </div>
+                     </div>
+                     <div class="d-flex flex-row align-center col-12 col-md-2 pa-0">
+                        <div class="d-flex flex-column col-6">
+                           <span class="tw-text-xs">Category</span>
+                           <span class="tw-text-xs tw-font-semibold">{{ item.category }}</span>
+                        </div>
+                        <div class="d-flex flex-column col-6">
+                           <span class="tw-text-xs">Last Updated</span>
+                           <span class="tw-text-xs tw-font-semibold">{{ $moment(item.created).fromNow() }}</span>
+                        </div>
+                     </div>
+                     <div class="d-flex flex-column col-12 col-md-2">
+                        <span class="tw-text-xs">Created</span>
+                        <span class="tw-text-xs tw-font-semibold">{{ $moment(item.created).format('LL') }}</span>
+                     </div>
+                  </div>
+               </div>
+            </template>
+         </v-data-table>
+      </div>
+      <div class="d-flex flex-row my-3 justify-end">
+         <div class="d-flex flex-row align-center">
+            <v-btn :ripple="false" plain small depressed icon color="primary" class="tw-border-cyan-400 tw-border-4">
+               <Iconify iconName="fluent:chevron-double-left-20-filled" className="tw-text-sm grey--text mr-1 my-1" />
+            </v-btn>
+            <v-btn :ripple="false" plain small depressed icon color="primary" class="tw-border-cyan-400 tw-border-4">
+               <Iconify iconName="uil:angle-left" className="tw-text-sm grey--text mr-1 my-1" />
+            </v-btn>
+            <div v-if="pageCount === 0" class="d-flex flex-row">
+               <v-btn x-small depressed color="primary">1</v-btn>
+            </div>
+            <div v-for="(item, index) in pageCount" :key="index" class="d-flex flex-row">
+               <v-btn 
+                  :key="index" 
+                  x-small 
+                  depressed 
+                  :color="`${ page === (index+1) ? 'primary' : ''}`" 
+                  :class="`${ pageCount > 0 && 'mx-1'}`"
+                  @click="page = (index+1)"
+               >
+                     {{ index + 1 }}
+               </v-btn>
+            </div>
+            <v-btn :ripple="false" plain small depressed icon color="primary" class="tw-border-cyan-400 tw-border-4">
+               <Iconify iconName="uil:angle-right" className="tw-text-sm grey--text mr-1 my-1" />
+            </v-btn>
+            <v-btn :ripple="false" plain small depressed icon color="primary" class="tw-border-cyan-400 tw-border-4">
+               <Iconify iconName="fluent:chevron-double-right-20-filled" className="tw-text-sm grey--text mr-1 my-1" />
+            </v-btn>
+         </div>
+      </div>
+   </div>
+</template>
+
+<script>
+import Breadcump from '~/components/Breadcump.vue'
+import { ticket } from './ticket'
+export default {
+   components: { Breadcump },
+   data: () => ({
+      items: [
+         {
+            text: 'Ticket System',
+            disabled: true,
+            href: 'breadcrumbs_dashboard',
+         },
+         {
+            text: 'List',
+            disabled: true,
+            href: 'ticket/list',
+         },
+      ],
+      search: '',
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+      calendarMenu: false,
+      dates: [(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10), (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)],
+      category: 0,
+      categoryList: [
+         {
+            catId: 1,
+            catTitle: 'Custumer Problem',
+         },
+         {
+            catId: 2,
+            catTitle: 'Internal Problem',
+         },
+         {
+            catId: 3,
+            catTitle: 'New Installation',
+         },
+         {
+            catId: 4,
+            catTitle: 'Dismantle',
+         },
+         {
+            catId: 5,
+            catTitle: 'New Infrastructor',
+         }
+      ],
+      headers: [
+         { text: 'Ticket Number', sortable: false, value: 'ticketId', isShow: true},
+         { text: 'Title', sortable: false, value: 'title', isShow: true},
+         { text: 'creator', sortable: false, value: 'creator', isShow: true},
+         { text: 'created', sortable: false, value: 'created', isShow: true},
+         { text: 'desc', sortable: false, value: 'desc', isShow: true},
+      ],
+      desserts: [...ticket]
+   }),
+   computed: {
+      dateRangeText () {
+         return this.dates.join(' - ')
+      },
+      showHeaders() {
+         return this.headers.filter(i => i.isShow === true)
+      },
+   },
+   methods: {
+      changeCriticalColor: priority => {
+         return priority == 1 ? 'error--text' : ( priority == 2 ? 'danger--text' : 'success--text')
+      },
+      priorityName: priority => {
+         return priority == 1 ? 'Critical' : ( priority == 2 ? 'High' : 'Normal')
+      },
+      changeState: state => {
+         return state == 1 ? 'New' : ( state == 2 ? 'In Progress' : 'Done')
+      },
+      changeStateColor: state => {
+         return state == 1 ? 'warning' : ( state == 2 ? 'info' : 'success')
+      },
+      selectHeader(value) {
+         this.headers = this.headers.map(i => i.value === value ? {...i, isShow: !i.isShow} : {...i})
+      },
+   }
+}
+</script>
