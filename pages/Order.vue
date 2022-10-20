@@ -1,33 +1,5 @@
 <template>
-   <div class="col-12 pa-0 d-flex flex-row mt-3">
-      <div class="col-12 col-md-7 pa-0 pr-md-2">
-         <div
-            class="col-12 px-8 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
-         >
-            <div v-if="catalogLoading" class="py-10 d-flex flex-column mx-auto">
-               <div class="text-caption align-center justify-center grey--text">
-                  Loading catalog...
-               </div>
-            </div>
-            <div
-               v-if="catalogError"
-               class="text-caption mt-50 align-center mx-auto grey--text"
-            >
-               Load Catalog Data Error.
-            </div>
-
-            <div v-if="catalogData.length > 0">Course</div>
-         </div>
-      </div>
-
-      <div class="col-12 col-md-5 pa-0 pl-md-2">
-         <div
-            class="px-14 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
-         >
-            <div>Chart</div>
-         </div>
-      </div>
-   </div>
+   <div class="d-flex flex-column mt-3">Order</div>
 </template>
 
 <script>
@@ -47,8 +19,6 @@ export default {
             massage: "",
          },
          loading: false,
-         catalogLoading: false,
-         catalogError: false,
          valid: true,
          remember: false,
          email: "",
@@ -59,11 +29,7 @@ export default {
          password: "",
          passwordShow: false,
          passwordRules: [(v) => !!v || "Password is required!"],
-         catalogData: [],
       };
-   },
-   async created() {
-      await this.getUser();
    },
    methods: {
       showNotif(type, message) {
@@ -80,31 +46,6 @@ export default {
             type: "",
             massage: "",
          };
-      },
-      async getUser() {
-         console.log(process.env.NUXT_ENV_API_CATALOG_URL);
-         try {
-            this.catalogLoading = true;
-            this.catalogData = [];
-            const res = await this.$axios.get(
-               `${process.env.NUXT_ENV_API_CATALOG_URL}/api/v1/course`
-            );
-
-            const resData = res.data;
-            console.log(resData);
-            if (resData.status == "SUCCESS") {
-               this.catalogData = resData.data;
-            } else {
-               this.showNotif("warning", resData.message);
-            }
-            this.catalogLoading = false;
-         } catch (error) {
-            console.log(error);
-            this.catalogError = true;
-            this.catalogLoading = false;
-            this.catalogData = [];
-            this.showNotif("error", "Internal Server Error.");
-         }
       },
       async submitForm() {
          if (this.$refs.form.validate()) {

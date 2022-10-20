@@ -1,19 +1,19 @@
 <template>
    <v-app class="tw-overflow-hidden fill-height">
       <Notif />
-      <v-main v-if="this.$auth.loggedIn" class="tw-overflow-hidden fill-height">
-         <div class="col-12 pa-0 d-flex flex-row fill-height bgPrimary">
-            <!-- <div class="col-md-2 d-none d-md-flex pa-0 white"> -->
-            <Sidebar />
-            <!-- </div> -->
-            <div class="col-12 col-md-10 pa-0 bgPrimary">
-               <Header />
-               <Nuxt />
+      <v-main class="tw-overflow-hidden fill-height">
+         <div
+            class="tw-bg-[url('/pattern/motpath.svg')] fill-height tw-w-full tw-bg-cover tw-bg-repeat tw-bg-center"
+         >
+            <div class="tw-bg-black/30 tw-h-full">
+               <div
+                  class="col-12 col-md-8 pa-0 d-flex flex-column mx-auto py-10"
+               >
+                  <Header />
+                  <Nuxt />
+               </div>
             </div>
          </div>
-      </v-main>
-      <v-main v-else class="tw-overflow-hidden fill-height bgSecondary">
-         <Nuxt />
       </v-main>
    </v-app>
 </template>

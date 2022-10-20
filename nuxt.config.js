@@ -5,7 +5,7 @@ export default {
    // Global page headers: https://go.nuxtjs.dev/config-head
    head: {
       // titleTemplate: "%s SMI - Ticket Apps",
-      title: "SMI - CRM",
+      title: "LKS - Course Apps",
       htmlAttrs: {
          lang: "en",
       },
@@ -53,15 +53,12 @@ export default {
       // proxy: true,
    },
 
-   router: {
-      middleware: ["auth"],
-   },
-
    // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
    vuetify: {
       customVariables: ["@/assets/variables.scss"],
       treeShake: true,
       theme: {
+         disable: false,
          dark: false,
          themes: {
             dark: {
@@ -85,61 +82,6 @@ export default {
          },
          icons: "md",
       },
-   },
-
-   // @nuxtjs/auth-next config options
-   auth: {
-      strategies: {
-         local: {
-            scheme: "refresh",
-            token: {
-               property: "data.accessToken",
-               data: "accessToken",
-               global: true,
-               maxAge: 1800,
-               type: "Bearer",
-               required: true,
-            },
-            refreshToken: {
-               property: "data.refreshToken",
-               data: "refreshToken",
-               maxAge: 60 * 60 * 24 * 30 * 12,
-               required: true,
-            },
-            user: {
-               property: "data",
-               autoFetch: true,
-            },
-            endpoints: {
-               login: { url: "/signin", method: "post" },
-               refresh: { url: "/token", method: "post" },
-               logout: { url: "/signout", method: "post" },
-               user: { url: "/user", method: "get" },
-            },
-            tokenRequired: true,
-            autoLogout: false,
-         },
-      },
-      watchLoggedIn: true,
-      redirect: {
-         login: "/login",
-         logout: "/login",
-         home: "/apps/dashboard",
-         callback: false,
-      },
-      // cookie: {
-      //    prefix: "auth.",
-      //    options: {
-      //       path: "/",
-      //       expires: 8,
-      //    },
-      // },
-      // token: {
-      //    prefix: "_token.",
-      //    global: true,
-      // },
-      localStorage: false,
-      plugins: ["~/plugins/auth.js"],
    },
 
    // Build Configuration: https://go.nuxtjs.dev/config-build
