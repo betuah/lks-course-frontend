@@ -30,6 +30,7 @@
                   <Course
                      :data="item"
                      :addCart="addCart"
+                     :deleteCourse="deleteCourse"
                      :class="index > 0 && `mt-4`"
                   />
                </div>
@@ -242,10 +243,37 @@ export default {
             this.cartLoading = false;
          } catch (e) {
             if (e.response) {
-               this.showNotif("error", `failed buying`);
+               this.showNotif("error", `${e.response.message}`);
+            } else {
+               this.showNotif("error", `Cannot connect to service`);
             }
             this.cartLoading = false;
             this.cartError = true;
+         }
+      },
+      async deleteCourse(id) {
+         try {
+            this.loadingDelete = true;
+            const res = await this.$axios.delete(
+               `${process.env.NUXT_ENV_API_URL}/api/v1/course/${id}`
+            );
+            const resData = res.data;
+            if (resData.status == "SUCCESS") {
+               this.getCourse();
+               this.showNotif("Success", "delete course success");
+            }
+            this.loadingDelete = false;
+         } catch (error) {
+            if (error.response) {
+               const errData = error.response.data;
+               this.showNotif("warning", `${errData.error.message}`);
+            } else {
+               this.showNotif(
+                  "error",
+                  "Ops something wrong, cannot connect to server"
+               );
+            }
+            this.loadingDelete = false;
          }
       },
    },

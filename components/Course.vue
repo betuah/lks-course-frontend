@@ -9,8 +9,14 @@
          />
       </div>
       <div class="d-flex flex-column flex-grow-1 ml-4">
-         <div class="text-subtitle-1 font-weight-bold">
-            {{ data.courseName }}
+         <div class="d-flex flex-row flex-grow-1">
+            <span class="text-subtitle-1 font-weight-bold">
+               {{ data.courseName }}
+            </span>
+            <v-spacer></v-spacer>
+            <v-btn icon small @click="delCourse(data.courseId)">
+               <font-awesome-icon icon="trash" class="tw-text-xs error--text" />
+            </v-btn>
          </div>
          <div class="d-flex flex-row">
             <span
@@ -54,6 +60,9 @@ export default {
       addCart: {
          type: Function,
       },
+      deleteCourse: {
+         type: Function,
+      },
    },
    data() {
       return {
@@ -63,6 +72,9 @@ export default {
    methods: {
       addToCart(data) {
          this.addCart(data);
+      },
+      async delCourse(id) {
+         this.deleteCourse(id);
       },
    },
 };
