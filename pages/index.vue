@@ -2,9 +2,9 @@
    <div class="col-12 pa-0 d-flex flex-row mt-3">
       <div class="col-12 col-md-7 pa-0 pr-md-2">
          <div
-            class="col-12 px-8 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
+            class="col-12 px-4 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
          >
-            <div v-if="catalogLoading" class="py-10 d-flex flex-column mx-auto">
+            <div v-if="catalogLoading" class="py-2 d-flex flex-column mx-auto">
                <div class="text-caption align-center justify-center grey--text">
                   Loading catalog...
                </div>
@@ -16,15 +16,86 @@
                Load Catalog Data Error.
             </div>
 
-            <div v-if="catalogData.length > 0">Course</div>
+            <div
+               v-if="
+                  catalogData.length === 0 && !catalogLoading && !catalogError
+               "
+               class="d-flex flex-column justify-center align-center"
+            >
+               No course available.
+            </div>
+
+            <div v-if="catalogData.length > 0" class="d-flex flex-column py-3">
+               <div v-for="(item, index) in catalogData" :key="index">
+                  <Course
+                     :data="item"
+                     :addCart="addCart"
+                     :class="index > 0 && `mt-4`"
+                  />
+               </div>
+            </div>
          </div>
       </div>
 
       <div class="col-12 col-md-5 pa-0 pl-md-2">
          <div
-            class="px-14 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
+            class="px-4 py-4 d-flex flex-column tw-shadow-md tw-rounded-2xl tw-bg-white"
          >
-            <div>Chart</div>
+            <span class="tw-text-lg font-weight-bold">Cart</span>
+            <v-divider class="my-3"></v-divider>
+            <v-simple-table>
+               <template v-slot:default>
+                  <thead>
+                     <tr>
+                        <th class="text-left">Title</th>
+                        <th class="text-left">Qty</th>
+                        <th class="text-left">Price</th>
+                        <th>Action</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr v-for="(item, index) in cartData" :key="index">
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>Rp {{ item.price }}</td>
+                        <td>
+                           <div
+                              @click="decreaseQty(item.id)"
+                              class="tw-rounded-lg tw-shadow-md tw-bg-lightRed py-1 px-4 d-flex flex-column align-center justify-center hover:tw-bg-gray-500 hover:tw-text-white tw-transition-all tw-duration-500 tw-ease-in-out tw-cursor-pointer"
+                           >
+                              <span
+                                 class="text-caption white--text font-weight-bold"
+                                 >-</span
+                              >
+                           </div>
+                        </td>
+                     </tr>
+                     <tr class="tw-bg-gray-100">
+                        <td colspan="2">
+                           <div class="d-flex flex-row justify-center">
+                              <span
+                                 class="text-subtitle-2 font-weight-bold text-center"
+                                 >Amount</span
+                              >
+                           </div>
+                        </td>
+                        <td colspan="2">
+                           <span class="font-weight-bold">Rp {{ total }}</span>
+                        </td>
+                     </tr>
+                  </tbody>
+               </template>
+            </v-simple-table>
+            <div>
+               <div
+                  @click="buyCourse()"
+                  class="tw-rounded-lg my-4 tw-shadow-md tw-bg-yellow-400 py-1 px-4 d-flex flex-column align-center justify-center hover:tw-bg-gray-500 hover:tw-text-white tw-transition-all tw-duration-500 tw-ease-in-out tw-cursor-pointer"
+               >
+                  <span class="text-caption font-weight-bold">{{
+                     cartLoading ? "Loading..." : "Buy and Enroll"
+                  }}</span>
+               </div>
+            </div>
          </div>
       </div>
    </div>
@@ -49,21 +120,19 @@ export default {
          loading: false,
          catalogLoading: false,
          catalogError: false,
-         valid: true,
-         remember: false,
-         email: "",
-         emailRules: [
-            (v) => !!v || "E-mail is required!",
-            (v) => /.+@.+\..+/.test(v) || "Email format is not valid!",
-         ],
-         password: "",
-         passwordShow: false,
-         passwordRules: [(v) => !!v || "Password is required!"],
          catalogData: [],
+         cartLoading: false,
+         cartError: false,
+         cartData: [],
       };
    },
+   computed: {
+      total() {
+         return this.cartData.reduce((a, b) => a + (b["price"] || 0), 0);
+      },
+   },
    async created() {
-      await this.getUser();
+      await this.getCourse();
    },
    methods: {
       showNotif(type, message) {
@@ -81,17 +150,21 @@ export default {
             massage: "",
          };
       },
-      async getUser() {
-         console.log(process.env.NUXT_ENV_API_CATALOG_URL);
+      sum(key) {
+         return this.reduce((a, b) => a + (b[key] || 0), 0);
+      },
+      randomNumber(min, max) {
+         return Math.floor(Math.random() * (max - min + 1) + min);
+      },
+      async getCourse() {
          try {
             this.catalogLoading = true;
             this.catalogData = [];
             const res = await this.$axios.get(
-               `${process.env.NUXT_ENV_API_CATALOG_URL}/api/v1/course`
+               `${process.env.NUXT_ENV_API_URL}/api/v1/course`
             );
 
             const resData = res.data;
-            console.log(resData);
             if (resData.status == "SUCCESS") {
                this.catalogData = resData.data;
             } else {
@@ -99,55 +172,81 @@ export default {
             }
             this.catalogLoading = false;
          } catch (error) {
-            console.log(error);
             this.catalogError = true;
             this.catalogLoading = false;
             this.catalogData = [];
             this.showNotif("error", "Internal Server Error.");
          }
       },
-      async submitForm() {
-         if (this.$refs.form.validate()) {
-            this.loading = true;
-            try {
-               const data = {
-                  remember: this.remember,
-                  email: this.email,
-                  password: this.password,
-               };
+      async addCart(item) {
+         const index = this.cartData.findIndex((object) => {
+            return object.id === item.courseId;
+         });
 
-               let response = await this.$auth.loginWith("local", { data });
-               if (response) {
-                  if (response.data.success) {
-                     console.log(this.$auth.user.fullName);
-                     this.showNotif(
-                        "success",
-                        `Welcome back <span class="font-weight-bold">${this.$auth.user.fullName}</span>.`
-                     );
-                     this.$router.push("/apps/dashboard");
-                  } else {
-                     this.showAlert("error", `${response.data.message}`);
-                  }
-               }
-               console.log(this.$auth.user);
-               this.loading = false;
-            } catch (err) {
-               this.showNotif("error", "Internal Server Error.");
-               this.loading = false;
-            }
+         const itemArr = {
+            id: item.courseId,
+            title: item.courseName,
+            price: item.price,
+            qty: 1,
+         };
+
+         if (index !== -1) {
+            this.cartData[index].qty++;
+            this.cartData[index].price =
+               this.cartData[index].price * (this.cartData[index].qty + 1);
          } else {
-            this.showAlert(
-               "error",
-               "There are items that require your attention."
-            );
+            this.cartData.push(itemArr);
          }
       },
-      async googleSignIn() {
+      async decreaseQty(id) {
+         const index = this.cartData.findIndex((object) => {
+            return object.id === id;
+         });
+
+         if (index !== -1) {
+            if (this.cartData[index].qty == 1) {
+               this.cartData.splice(index, 1);
+            } else {
+               this.cartData[index].qty--;
+            }
+         }
+      },
+      async buyCourse() {
          try {
-            await this.$auth.loginWith("google", {
-               params: { prompt: "select_account" },
+            this.cartLoading = true;
+            const items = this.cartData.map((i) => {
+               return {
+                  course_id: i.id,
+                  price: i.price,
+                  amount: i.price,
+                  qty: i.qty,
+               };
             });
-         } catch (error) {}
+
+            const order = {
+               order_id: `ODR_${this.randomNumber(1, 1000)}`,
+               items: items,
+               payment_method: "virtual_account",
+               bank: "mandiri",
+            };
+
+            await this.$axios.post(
+               `${process.env.NUXT_ENV_API_URL}/api/v1/order`,
+               order
+            );
+
+            this.cartData = [];
+
+            this.showNotif("success", `Buy course success..`);
+
+            this.cartLoading = false;
+         } catch (e) {
+            if (e.response) {
+               this.showNotif("error", `failed buying`);
+            }
+            this.cartLoading = false;
+            this.cartError = true;
+         }
       },
    },
 };

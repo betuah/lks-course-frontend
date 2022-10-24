@@ -1,22 +1,33 @@
 <template>
-   <div class="col-12 pa-5 d-flex flex-column">
+   <div class="col-12 pa-0 my-2 d-flex flex-column">
       <div
          class="col-12 pa-0 d-flex flex-row align-center justify-start tw-rounded-2xl tw-shadow-md py-5 px-4 white"
       >
          <div class="d-flex flex-column align-start">
             <div class="d-flex flex-row justify-center align-center">
+               <v-btn
+                  small
+                  icon
+                  color="white"
+                  class="d-flex d-md-none tw-bg-accent/80 mr-3"
+                  @click="$router.go(-1)"
+               >
+                  <font-awesome-icon
+                     icon="angle-left"
+                     class="tw-text-xs white--text"
+                  />
+               </v-btn>
                <span class="text-h5 font-weight-medium textPrimary--text"
-                  >Company Settings</span
+                  >Add Course</span
                >
             </div>
             <span class="text-caption grey--text"
-               >Providing company profile information will help us in providing
-               better service for your company.
+               >If the backend catalog service work, you can add the course
+               catalog from this form.
             </span>
          </div>
       </div>
       <v-form
-         v-if="form.company_name !== ''"
          ref="form"
          v-model="valid"
          lazy-validation
@@ -31,10 +42,139 @@
                <div
                   class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
                >
-                  <span class="font-weight-bold textPrimary--text">Logo</span>
+                  <span class="font-weight-bold textPrimary--text"
+                     >Course ID</span
+                  >
                   <span class="text-caption grey--text"
-                     >Company logo can be used for reports or application
-                     needs.</span
+                     >Unique ID for course catalog.</span
+                  >
+               </div>
+               <div
+                  class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
+               >
+                  <v-text-field
+                     v-model="form.id"
+                     label="Picker in menu"
+                     outlined
+                     dense
+                     :rules="rules.id"
+                     hide-details="auto"
+                     class="rounded-lg text-body-2"
+                     color="primary"
+                  >
+                     <template v-slot:label>
+                        <div class="tw-text-sm">Course ID</div>
+                     </template>
+                     <template v-slot:prepend-inner>
+                        <div
+                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
+                        >
+                           <font-awesome-icon
+                              icon="laptop-code"
+                              class="tw-text-xs"
+                           />
+                        </div>
+                     </template>
+                  </v-text-field>
+               </div>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div
+               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
+            >
+               <div
+                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
+               >
+                  <span class="font-weight-bold textPrimary--text"
+                     >Course Title</span
+                  >
+                  <span class="text-caption grey--text"
+                     >Course name with maximum 150 character</span
+                  >
+               </div>
+               <div
+                  class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
+               >
+                  <v-text-field
+                     v-model="form.title"
+                     outlined
+                     dense
+                     :rules="rules.title"
+                     hide-details="auto"
+                     class="rounded-lg text-body-2"
+                     color="primary"
+                  >
+                     <template v-slot:label>
+                        <div class="tw-text-sm">Title</div>
+                     </template>
+                     <template v-slot:prepend-inner>
+                        <div
+                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
+                        >
+                           <font-awesome-icon
+                              icon="bookmark"
+                              class="tw-text-xs"
+                           />
+                        </div>
+                     </template>
+                  </v-text-field>
+               </div>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div
+               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
+            >
+               <div
+                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
+               >
+                  <span class="font-weight-bold textPrimary--text"
+                     >Course Level</span
+                  >
+                  <span class="text-caption grey--text"
+                     >Course difficult level.</span
+                  >
+               </div>
+               <div
+                  class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
+               >
+                  <v-select
+                     v-model="form.level"
+                     outlined
+                     dense
+                     :rules="rules.level"
+                     :items="levelList"
+                     hide-details="auto"
+                     class="rounded-lg text-body-2"
+                     color="primary"
+                  >
+                     <template v-slot:label>
+                        <div class="tw-text-sm">Level</div>
+                     </template>
+                     <template v-slot:prepend-inner>
+                        <div
+                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
+                        >
+                           <font-awesome-icon
+                              icon="chart-simple"
+                              class="tw-text-xs"
+                           />
+                        </div>
+                     </template>
+                  </v-select>
+               </div>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div
+               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
+            >
+               <div
+                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
+               >
+                  <span class="font-weight-bold textPrimary--text"
+                     >Cover Image</span
+                  >
+                  <span class="text-caption grey--text"
+                     >This is will be display on catalog cover.</span
                   >
                </div>
                <div
@@ -48,10 +188,11 @@
                      class="rounded-lg text-body-2"
                      prepend-icon=""
                      accept="image/png, image/jpeg"
+                     :rules="rules.coverImage"
                      @change="onLogoUpload"
                   >
                      <template v-slot:label>
-                        <div class="tw-text-sm">Upload Logo</div>
+                        <div class="tw-text-sm">Upload Cover Image</div>
                      </template>
                      <template v-slot:prepend-inner>
                         <div class="d-flex flex-row tw-h-6 align-center mr-1">
@@ -72,253 +213,89 @@
                   class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
                >
                   <span class="font-weight-bold textPrimary--text"
-                     >Company Name</span
+                     >Category</span
                   >
-                  <span class="text-caption grey--text"
-                     >Company name will be use for aplication report, email
-                     template and our client data.</span
-                  >
+                  <span class="text-caption grey--text">Course category</span>
                </div>
                <div
                   class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
                >
                   <v-text-field
-                     v-model="form.company_name"
+                     v-model="form.category"
                      outlined
                      dense
+                     :rules="rules.title"
                      hide-details="auto"
                      class="rounded-lg text-body-2"
                      color="primary"
                   >
                      <template v-slot:label>
-                        <div class="tw-text-sm">Name</div>
+                        <div class="tw-text-sm">Category</div>
                      </template>
                      <template v-slot:prepend-inner>
                         <div
                            class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
                         >
-                           <font-awesome-icon
-                              icon="building"
-                              class="tw-text-xs"
-                           />
+                           <font-awesome-icon icon="tags" class="tw-text-xs" />
                         </div>
                      </template>
                   </v-text-field>
                </div>
             </div>
             <v-divider class="my-2"></v-divider>
-            <div
-               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
-            >
+            <div class="col-12 pa-0 py-2">
                <div
-                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
+                  class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
                >
-                  <span class="font-weight-bold textPrimary--text">Phone</span>
-                  <span class="text-caption grey--text"
-                     >Your company's official phone number.</span
+                  <div
+                     class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
                   >
-               </div>
-               <div
-                  class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
-               >
-                  <v-text-field
-                     v-model="form.phone_number"
-                     outlined
-                     dense
-                     hide-details="auto"
-                     class="rounded-lg text-body-2"
-                     color="primary"
-                     placeholder="021 5555 111 or +62 813 8888 222"
+                     <span class="font-weight-bold textPrimary--text"
+                        >Description</span
+                     >
+                     <span class="text-caption grey--text"
+                        >Description about course.</span
+                     >
+                  </div>
+                  <div
+                     class="col-12 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
                   >
-                     <template v-slot:label>
-                        <div class="tw-text-sm">Phone Number</div>
-                     </template>
-                     <template v-slot:prepend-inner>
-                        <div
-                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
-                        >
-                           <font-awesome-icon
-                              icon="address-book"
-                              class="tw-text-xs"
-                           />
-                        </div>
-                     </template>
-                  </v-text-field>
-               </div>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <div
-               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
-            >
-               <div
-                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
-               >
-                  <span class="font-weight-bold textPrimary--text">Email</span>
-                  <span class="text-caption grey--text"
-                     >Your company's official email.</span
-                  >
-               </div>
-               <div
-                  class="col012 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
-               >
-                  <v-text-field
-                     v-model="form.email"
-                     outlined
-                     dense
-                     hide-details="auto"
-                     class="rounded-lg text-body-2"
-                     color="primary"
-                     placeholder="email@yourcompany.com"
-                  >
-                     <template v-slot:label>
-                        <div class="tw-text-sm">Email</div>
-                     </template>
-                     <template v-slot:prepend-inner>
-                        <div
-                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
-                        >
-                           <font-awesome-icon
-                              icon="envelope"
-                              class="tw-text-xs"
-                           />
-                        </div>
-                     </template>
-                  </v-text-field>
-               </div>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <div
-               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
-            >
-               <div
-                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
-               >
-                  <span class="font-weight-bold textPrimary--text"
-                     >Website</span
-                  >
-                  <span class="text-caption grey--text"
-                     >Your company's official website.</span
-                  >
-               </div>
-               <div
-                  class="col012 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
-               >
-                  <v-text-field
-                     v-model="form.website"
-                     outlined
-                     dense
-                     hide-details="auto"
-                     class="rounded-lg text-body-2"
-                     color="primary"
-                     placeholder="www.companysites.com"
-                  >
-                     <template v-slot:label>
-                        <div class="tw-text-sm">Website</div>
-                     </template>
-                     <template v-slot:prepend-inner>
-                        <div
-                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
-                        >
-                           <font-awesome-icon
-                              icon="earth-asia"
-                              class="tw-text-xs"
-                           />
-                        </div>
-                     </template>
-                  </v-text-field>
-               </div>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <div
-               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
-            >
-               <div
-                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
-               >
-                  <span class="font-weight-bold textPrimary--text"
-                     >Tax Number</span
-                  >
-                  <span class="text-caption grey--text"
-                     >Your company's tax number for tax purpose.</span
-                  >
-               </div>
-               <div
-                  class="col012 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
-               >
-                  <v-text-field
-                     v-model="form.tax_number"
-                     outlined
-                     dense
-                     hide-details="auto"
-                     class="rounded-lg text-body-2"
-                     color="primary"
-                  >
-                     <template v-slot:label>
-                        <div class="tw-text-sm">Tax Number</div>
-                     </template>
-                     <template v-slot:prepend-inner>
-                        <div
-                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
-                        >
-                           <font-awesome-icon
-                              icon="percent"
-                              class="tw-text-xs"
-                           />
-                        </div>
-                     </template>
-                  </v-text-field>
-               </div>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <div
-               class="col-12 pa-0 py-2 d-flex flex-column flex-md-row justify-start align-start"
-            >
-               <div
-                  class="col-12 col-md-5 pa-0 d-flex flex-column pb-2 pb-md-0 pr-md-2"
-               >
-                  <span class="font-weight-bold textPrimary--text"
-                     >Address</span
-                  >
-                  <span class="text-caption grey--text"
-                     >Your company's address.</span
-                  >
-               </div>
-               <div
-                  class="col012 col-md-7 pa-0 pl-md-3 d-flex flex-row align-self-center"
-               >
-                  <v-textarea
-                     v-model="form.address"
-                     outlined
-                     dense
-                     hide-details="auto"
-                     class="rounded-lg text-body-2"
-                     color="primary"
-                  >
-                     <template v-slot:label>
-                        <div class="tw-text-sm">Address</div>
-                     </template>
-                     <template v-slot:prepend-inner>
-                        <div
-                           class="d-flex flex-row tw-h-6 align-center mr-1 grey--text"
-                        >
-                           <font-awesome-icon
-                              icon="location-dot"
-                              class="tw-text-xs"
-                           />
-                        </div>
-                     </template>
-                  </v-textarea>
+                     <v-textarea
+                        v-model="form.desc"
+                        label="Description"
+                        :rules="rules.desc"
+                        auto-grow
+                        outlined
+                        dense
+                        hide-details="auto"
+                        class="rounded-lg text-caption"
+                     >
+                        <template v-slot:label>
+                           <div class="tw-text-sm">Description</div>
+                        </template>
+                        <template v-slot:prepend-inner>
+                           <div
+                              class="d-flex flex-row tw-h-6 align-center mr-1"
+                           >
+                              <font-awesome-icon
+                                 icon="circle-info"
+                                 class="tw-text-xs grey--text"
+                              />
+                           </div>
+                        </template>
+                     </v-textarea>
+                  </div>
                </div>
             </div>
             <v-divider class="my-2"></v-divider>
             <div class="col-12 pa-0 py-2 d-flex flex-column">
                <v-btn
-                  depressed
+                  :depressed="loading"
+                  :color="loading ? 'grey lighten-2' : 'primary'"
                   :loading="loading"
                   type="submit"
-                  color="primary"
                   class="font-weight-bold text-capitalize text-caption rounded-lg textPrimary--text align-self-end"
-                  >Update Data</v-btn
+                  >Add Course</v-btn
                >
             </div>
          </div>
@@ -329,23 +306,37 @@
 <script>
 export default {
    data: () => ({
-      form: {
-         logo: null,
-         company_name: "",
-         phone_number: "",
-         email: "",
-         website: "",
-         tax_number: "",
-         address: "",
-      },
-      teams: ["NOC", "CSS"],
-      loading: false,
+      dialog: false,
       valid: true,
+      form: {
+         coverImage: null,
+         id: "",
+         title: "",
+         level: "",
+         category: "",
+         price: 0,
+      },
+      rules: {
+         id: [(v) => !!v || "Course ID is required!"],
+         title: [(v) => !!v || "Course Title is required!"],
+         level: [(v) => !!v || "Course Level is required!"],
+         category: [(v) => !!v || "Category is required!"],
+         desc: [(v) => !!v || "Description is required!"],
+         group: [(v) => !!v || "Group is required!"],
+         coverImage: [(v) => !!v || "Cover image is required!"],
+      },
+      loading: false,
+      loadingTeam: false,
+      levelList: ["Beginner", "Intermediate", "Expert"],
    }),
-   async created() {
-      await this.getTeam(this.$store.state.selectedCompany);
-      await this.getCompany(this.$store.state.selectedCompany);
+   watch: {
+      dialog(newValue, old) {
+         if (newValue == false) {
+            this.team = "";
+         }
+      },
    },
+   async created() {},
    methods: {
       comparator(a, b) {
          return a == b;
@@ -354,62 +345,50 @@ export default {
          this.$store.commit("notif/SHOW", { type, message });
       },
       onLogoUpload(file) {
-         this.form.logo = file;
-      },
-      async getCompany(id) {
-         try {
-            const companyData = await this.$axios.get(`/company/${id}`);
-            const resData = companyData.data;
-            if (resData.success) {
-               delete resData.data.logo;
-               this.form = { ...this.form, ...resData.data };
-            } else {
-               this.company = null;
-            }
-         } catch (error) {
-            this.company = null;
-         }
-      },
-      async getTeam(id) {
-         try {
-            const teamData = await this.$axios.get(`/team/${id}`);
-            this.teams = teamData.data.data;
-         } catch (error) {
-            this.teams = null;
-         }
+         this.form.coverImage = file;
       },
       async submitForm() {
          if (this.$refs.form.validate()) {
             const formData = new FormData();
             this.loading = true;
 
-            if (this.form.logo !== null) {
-               formData.append("logo", this.form.logo, this.form.logo.name);
-               formData.append("company_name", this.form.company_name);
-               formData.append("phone_number", this.form.phone_number);
-               formData.append("email", this.form.email);
-               formData.append("website", this.form.website);
-               formData.append("tax_number", this.form.tax_number);
-               formData.append("address", this.form.address);
+            if (this.form.coverImage !== null) {
+               formData.append("courseId", this.form.id);
+               formData.append("courseName", this.form.title);
+               formData.append("courseDesc", this.form.desc);
+               formData.append("courseCategory", this.form.category);
+               formData.append("courseLevel", this.form.level);
+               formData.append("price", this.form.price);
+               formData.append(
+                  "coverImage",
+                  this.form.coverImage,
+                  this.form.coverImage.name
+               );
             }
 
             try {
-               const updateData = await this.$axios.put(
-                  `/company/${this.$store.state.selectedCompany}`,
-                  this.form.logo == null ? this.form : formData
+               const updateData = await this.$axios.post(
+                  `${process.env.NUXT_ENV_API_URL}/api/v1/course`,
+                  this.form.coverImage == null ? this.form : formData
                );
-               this.form.logo = null;
+               this.form.coverImage = null;
                const resData = updateData.data;
-               if (resData.success) {
-                  this.showNotif("success", `Data has been updated!`);
-                  this.form.logo = null;
+               if (resData.status == "SUCCESS") {
+                  this.showNotif("success", `Add new course sueccess!`);
+                  this.form.coverImage = null;
                   this.loading = false;
                } else {
                   this.showAlert("error", `${resData.data.message}`);
-                  this.form.logo = null;
+                  this.form.coverImage = null;
                   this.loading = false;
                }
+               this.$refs.anyName.reset();
             } catch (err) {
+               if (err.response) {
+                  this.showAlert("error", `${response.data.message}`);
+                  this.loading = false;
+               }
+               this.form.coverImage = null;
                this.showNotif("error", "Internal Server Error.");
                this.loading = false;
             }

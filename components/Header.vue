@@ -79,6 +79,23 @@
                   </div>
                </NuxtLink>
                <NuxtLink
+                  to="/addCourse"
+                  :class="`col-6 col-md-4 px-2 pa-0 d-flex flex-row justify-center align-center tw-transition-all tw-duration-200 tw-ease-in-out ${
+                     $nuxt.$route.path == '/addCourse' &&
+                     'tw-border-b-2 tw-border-yellow-400'
+                  }`"
+               >
+                  <div
+                     :class="`py-4 tw-text-md tw-cursor-pointer hover:tw-text-yellow-400 hover:tw-font-bold tw-transition-all tw-duration-200 tw-ease-in-out ${
+                        $nuxt.$route.path == '/addCourse'
+                           ? 'tw-text-yellow-400 tw-font-bold'
+                           : 'tw-text-white'
+                     }`"
+                  >
+                     Add Catalog
+                  </div>
+               </NuxtLink>
+               <NuxtLink
                   to="/order"
                   :class="`col-6 col-md-4 px-2 pa-0 d-flex flex-row justify-center align-center tw-transition-all tw-duration-200 tw-ease-in-out ${
                      $nuxt.$route.path == '/order' &&
